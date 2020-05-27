@@ -18,24 +18,43 @@ using System.Windows.Shapes;
 
 namespace Snake
 {
+    enum Direction
+    {
+        Up = 0,
+        Right = 1,
+        Down = 2,
+        Left = 3
+    }
+    public enum Difficulty
+    {
+        Boring = 1,
+        Easy = 2,
+        Medium = 3,
+        Hard = 4,
+        Insane = 5,
+    }
     public partial class MainWindow : Window
     {
 
-        enum Direction
+        
+        public int Score
         {
-            Up = 0,
-            Right = 1,
-            Down = 2,
-            Left = 3
+            get
+            {
+                return int.Parse(ScoreNumber.Text);
+            }
+            set
+            {
+                ScoreNumber.Text = value.ToString();
+            }
         }
-
-
         Direction direction = Direction.Right;
         Tuple<int, int> head = new Tuple<int, int>(0, 1);
         Tuple<int, int> tail = new Tuple<int, int>(0, 0);
         List<Tuple<int, int>> snakeBody = new List<Tuple<int, int>>();
-        int size = 10;
-        System.Timers.Timer snakeFrequency = new System.Timers.Timer(500);
+        (int x, int y) size = (x: 10, y: 10);
+        Difficulty difficulty = Difficulty.Boring;
+        System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
         Tuple<int, int> food = new Tuple<int, int>(0, 0);
 
 
@@ -56,9 +75,12 @@ namespace Snake
             SnakeGrid.ColumnDefinitions.Clear();
             SnakeGrid.RowDefinitions.Clear();
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size.x; i++)
             {
                 SnakeGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            for (int i = 0; i < size.y; i++)
+            {
                 SnakeGrid.RowDefinitions.Add(new RowDefinition());
             }
             int x = 0;
@@ -78,6 +100,7 @@ namespace Snake
                 x++;
             }
             snakeBody.Clear();
+            Score = 0;
             Dispatcher.Invoke(() =>
             {
                 SetColor(0, 0, Brushes.Green);
@@ -89,20 +112,48 @@ namespace Snake
             snakeFrequency.Start();
         }
         
-        private void AddFood()
+        private (int row,int column) GetRandomBlock()
         {
             var rand = new Random();
-            int row = rand.Next(0, size);
-            int column = rand.Next(0, size);
+            int row = rand.Next(0, size.y);
+            int column = rand.Next(0, size.x);
             while (snakeBody.Any(t => t.Item1 == row && t.Item2 == column))
             {
-                row = rand.Next(0, size);
-                column = rand.Next(0, size);
+                row = rand.Next(0, size.y);
+                column = rand.Next(0, size.x);
             }
-            SetColor(row, column, Brushes.Blue);
-            food = new Tuple<int, int>(row, column);
+            return (row, column);
         }
-
+        private void AddFood()
+        {
+            (int row, int column) block = GetRandomBlock();
+            SetColor(block.row, block.column, Brushes.Blue);
+            food = new Tuple<int, int>(block.row, block.column);
+            IncreaseScore(difficulty);
+        }
+        private void IncreaseScore(Difficulty difficulty)
+        {
+            int scalar = 1;
+            switch (difficulty)
+            {
+                case Difficulty.Boring:
+                    scalar = 1;
+                    break;
+                case Difficulty.Easy:
+                    scalar = 2;
+                    break;
+                case Difficulty.Medium:
+                    scalar = 3;
+                    break;
+                case Difficulty.Hard:
+                    scalar = 4;
+                    break;
+                case Difficulty.Insane:
+                    scalar = 5;
+                    break;
+            }
+            Score += scalar;
+        }
         private void Move()
         {
             Dispatcher.Invoke(() =>
@@ -123,10 +174,10 @@ namespace Snake
         {
             int y = snakeBody.Count > 2 ? snakeBody.Last().Item1 : 0;
             int x = snakeBody.Count > 2 ? snakeBody.Last().Item2 : 0;
-            if (solidColorBrush == Brushes.Green && (row > size - 1 || column > size - 1 || row < 0 || column < 0 || (snakeBody.Count>2 && !(snakeBody.Last().Item1 ==  row && snakeBody.Last().Item2 == column) && snakeBody.Any(t => t.Item1 == row && t.Item2 == column))))
+            if (solidColorBrush == Brushes.Green && (row > size.y - 1 || column > size.x - 1 || row < 0 || column < 0 || (snakeBody.Count>2 && !(snakeBody.Last().Item1 ==  row && snakeBody.Last().Item2 == column) && snakeBody.Any(t => t.Item1 == row && t.Item2 == column))))
             {
                 snakeFrequency.Stop();
-                GameOverWindow gameOverWindow = new GameOverWindow(this);
+                GameOverWindow gameOverWindow = new GameOverWindow(this, Score);
                 var result = gameOverWindow.ShowDialog();
                 ResetGame();
                 return;

@@ -10,10 +10,16 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
             <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="20">
             Sorry
-        </TextBlock>
-            <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">
+            </TextBlock>
+            <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="20">
             Game Over!
-        </TextBlock>
+            </TextBlock>
+            <TextBlock HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="20">
+            Your Score Was
+            </TextBlock>
+            <TextBlock x:Name="FinalScore" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">
+            20!
+            </TextBlock>
             <Button x:Name="OK" Content="OK" Margin="20" Click="OK_Click"/>
         </StackPanel>
 

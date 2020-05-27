@@ -11,7 +11,13 @@
     </Window.Resources>
     <Grid Margin="10">
         <StackPanel>
-            <TextBlock Text="Snake" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="DarkGreen"/>
+            <Grid>
+                <TextBlock Text="Snake" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="DarkGreen"/>
+                <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" LastChildFill="False">
+                    <TextBlock Text="Score: " FontSize="10" FontWeight="Bold" Foreground="DarkGreen"/>
+                    <TextBlock x:Name="ScoreNumber" FontSize="10" FontWeight="Bold" Foreground="Blue"/>
+                </DockPanel>
+            </Grid>
             <Border BorderBrush="Black" BorderThickness="2">
                 <Grid x:Name="SnakeGrid" Height="300" Width="300" Background="LightGray">
 

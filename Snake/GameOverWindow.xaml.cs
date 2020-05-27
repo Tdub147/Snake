@@ -14,10 +14,11 @@ namespace Snake
 {
     public partial class GameOverWindow : Window
     {
-        public GameOverWindow(Window ownerWindow)
+        public GameOverWindow(Window ownerWindow, int score)
         {
             InitializeComponent();
             this.Owner = ownerWindow;
+            FinalScore.Text = score + "!";
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
