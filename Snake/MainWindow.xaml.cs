@@ -57,13 +57,13 @@ namespace Snake
         public List<(int y, int x)> snakeBody = new List<(int y, int x)>();
         public (int y, int x) size = (y: 10, x: 10);
         public System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
-        Image snakeHead = Application.Current.Resources["snakeHeadDrawingImage"] as Image;
+        Image snakeHead = new Image { VerticalAlignment=VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
 
         public MainWindow()
         {
             InitializeComponent();
             snakeFrequency.Elapsed += Timer_Elapsed;
-            
+            snakeHead.Source = Application.Current.Resources["snakeHeadDrawingImage"] as DrawingImage;
             ResetGame();
         }
 
