@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 
 namespace Snake
 {
-    enum Direction
+    public enum Direction
     {
         Up = 0,
         Right = 1,
@@ -49,24 +49,21 @@ namespace Snake
                 ScoreNumber.Text = value.ToString();
             }
         }
-        Direction direction = Direction.Right;
-        (int y, int x) head = (y: 0, x: 1);
-        (int y, int x) tail = (y: 0, x: 0);
-        (int y, int x) food = (y: 0, x: 0);
-        List<(int y, int x)> snakeBody = new List<(int y, int x)>();
-        (int y, int x) size = (y: 10, x: 10);
-        
-        Difficulty difficulty = Difficulty.Boring;
-        System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
-        
-
-
-
+        public Direction direction = Direction.Right;
+        public Difficulty difficulty = Difficulty.Boring;
+        public (int y, int x) head = (y: 0, x: 1);
+        public (int y, int x) tail = (y: 0, x: 0);
+        public (int y, int x) food = (y: 0, x: 0);
+        public List<(int y, int x)> snakeBody = new List<(int y, int x)>();
+        public (int y, int x) size = (y: 10, x: 10);
+        public System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
+        Image snakeHead = Application.Current.Resources["snakeHeadDrawingImage"] as Image;
 
         public MainWindow()
         {
             InitializeComponent();
             snakeFrequency.Elapsed += Timer_Elapsed;
+            
             ResetGame();
         }
 
@@ -76,7 +73,7 @@ namespace Snake
             SnakeGrid.Children.Clear();
             SnakeGrid.ColumnDefinitions.Clear();
             SnakeGrid.RowDefinitions.Clear();
-
+            SnakeGrid.Children.Add(snakeHead);
             for (int i = 0; i < size.x; i++)
             {
                 SnakeGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -106,6 +103,8 @@ namespace Snake
             {
                 SetColor(0, 0, Brushes.Green);
                 SetColor(0, 1, Brushes.Green);
+                snakeHead.SetValue(Grid.RowProperty, 0);
+                snakeHead.SetValue(Grid.ColumnProperty, 1);
             });
             Score = snakeBody.Count-1;
             direction = Direction.Right;
@@ -168,6 +167,8 @@ namespace Snake
                     SetColor(tail.y, tail.x, Brushes.Transparent);
                 }
                 SetColor(head.y, head.x, Brushes.Green);
+                snakeHead.SetValue(Grid.RowProperty, head.y);
+                snakeHead.SetValue(Grid.ColumnProperty, head.x);
             });
         }
 
@@ -183,7 +184,6 @@ namespace Snake
                 ResetGame();
                 return;
             }
-
             Grid grid = SnakeGrid.Children.OfType<Grid>().Single(g => (int?)g.GetValue(Grid.RowProperty) == row && (int?)g.GetValue(Grid.ColumnProperty) == column);
             grid.Background = solidColorBrush;
             if (solidColorBrush == Brushes.Green)
