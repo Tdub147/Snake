@@ -37,6 +37,7 @@ namespace Snake
     {
 
         
+        // Bound to ScoreNumber in the xaml
         public int Score
         {
             get
@@ -49,13 +50,15 @@ namespace Snake
             }
         }
         Direction direction = Direction.Right;
-        Tuple<int, int> head = new Tuple<int, int>(0, 1);
-        Tuple<int, int> tail = new Tuple<int, int>(0, 0);
-        List<Tuple<int, int>> snakeBody = new List<Tuple<int, int>>();
-        (int x, int y) size = (x: 10, y: 10);
+        (int y, int x) head = (y: 0, x: 1);
+        (int y, int x) tail = (y: 0, x: 0);
+        (int y, int x) food = (y: 0, x: 0);
+        List<(int y, int x)> snakeBody = new List<(int y, int x)>();
+        (int y, int x) size = (y: 10, x: 10);
+        
         Difficulty difficulty = Difficulty.Boring;
         System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
-        Tuple<int, int> food = new Tuple<int, int>(0, 0);
+        
 
 
 
@@ -70,7 +73,6 @@ namespace Snake
         private void ResetGame()
         {
             snakeFrequency.Stop();
-
             SnakeGrid.Children.Clear();
             SnakeGrid.ColumnDefinitions.Clear();
             SnakeGrid.RowDefinitions.Clear();
@@ -100,14 +102,14 @@ namespace Snake
                 x++;
             }
             snakeBody.Clear();
-            Score = 0;
             Dispatcher.Invoke(() =>
             {
                 SetColor(0, 0, Brushes.Green);
                 SetColor(0, 1, Brushes.Green);
             });
+            Score = snakeBody.Count-1;
             direction = Direction.Right;
-            head = new Tuple<int, int>(0, 1);
+            head = (0, 1);
             AddFood();
             snakeFrequency.Start();
         }
@@ -117,7 +119,7 @@ namespace Snake
             var rand = new Random();
             int row = rand.Next(0, size.y);
             int column = rand.Next(0, size.x);
-            while (snakeBody.Any(t => t.Item1 == row && t.Item2 == column))
+            while (snakeBody.Any(t => t.y == row && t.x == column))
             {
                 row = rand.Next(0, size.y);
                 column = rand.Next(0, size.x);
@@ -126,9 +128,8 @@ namespace Snake
         }
         private void AddFood()
         {
-            (int row, int column) block = GetRandomBlock();
-            SetColor(block.row, block.column, Brushes.Blue);
-            food = new Tuple<int, int>(block.row, block.column);
+            food = GetRandomBlock();
+            SetColor(food.y, food.x, Brushes.Blue);
             IncreaseScore(difficulty);
         }
         private void IncreaseScore(Difficulty difficulty)
@@ -154,27 +155,27 @@ namespace Snake
             }
             Score += scalar;
         }
-        private void Move()
+        private void MoveSnake()
         {
             Dispatcher.Invoke(() =>
             {
-                if (food.Item1 == tail.Item1 && food.Item2 == tail.Item2)
+                if (food.y == tail.y && food.x == tail.x)
                 {
                     AddFood();
                 }
                 else
                 {
-                    SetColor(tail.Item1, tail.Item2, Brushes.Transparent);
+                    SetColor(tail.y, tail.x, Brushes.Transparent);
                 }
-                SetColor(head.Item1, head.Item2, Brushes.Green);
+                SetColor(head.y, head.x, Brushes.Green);
             });
         }
 
         private void SetColor(int row, int column, SolidColorBrush solidColorBrush)
         {
-            int y = snakeBody.Count > 2 ? snakeBody.Last().Item1 : 0;
-            int x = snakeBody.Count > 2 ? snakeBody.Last().Item2 : 0;
-            if (solidColorBrush == Brushes.Green && (row > size.y - 1 || column > size.x - 1 || row < 0 || column < 0 || (snakeBody.Count>2 && !(snakeBody.Last().Item1 ==  row && snakeBody.Last().Item2 == column) && snakeBody.Any(t => t.Item1 == row && t.Item2 == column))))
+            int y = snakeBody.Count > 2 ? snakeBody.Last().y : 0;
+            int x = snakeBody.Count > 2 ? snakeBody.Last().x : 0;
+            if (solidColorBrush == Brushes.Green && (row > size.y - 1 || column > size.x - 1 || row < 0 || column < 0 || (snakeBody.Count>2 && !(snakeBody.Last().y ==  row && snakeBody.Last().x == column) && snakeBody.Any(t => t.y == row && t.x == column))))
             {
                 snakeFrequency.Stop();
                 GameOverWindow gameOverWindow = new GameOverWindow(this, Score);
@@ -187,11 +188,11 @@ namespace Snake
             grid.Background = solidColorBrush;
             if (solidColorBrush == Brushes.Green)
             {
-                snakeBody.Add(new Tuple<int, int>(row, column));
+                snakeBody.Add((row, column));
             }
             else if(solidColorBrush == Brushes.Transparent)
             {
-                snakeBody.Remove(new Tuple<int, int>(row, column));
+                snakeBody.Remove((row, column));
             }
         }
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -200,25 +201,25 @@ namespace Snake
             switch (direction)
             {
                 case Direction.Up:
-                    head = new Tuple<int, int>(snakeBody.Last().Item1 - 1, snakeBody.Last().Item2);
-                    tail = new Tuple<int, int>(snakeBody[0].Item1, snakeBody[0].Item2);
+                    head = (snakeBody.Last().y - 1, snakeBody.Last().x);
+                    tail = (snakeBody[0].y, snakeBody[0].x);
                     break;
                 case Direction.Right:
-                    head = new Tuple<int, int>(snakeBody.Last().Item1, snakeBody.Last().Item2 + 1);
-                    tail = new Tuple<int, int>(snakeBody[0].Item1, snakeBody[0].Item2);
+                    head = (snakeBody.Last().y, snakeBody.Last().x + 1);
+                    tail = (snakeBody[0].y, snakeBody[0].x);
                     break;
                 case Direction.Down:
-                    head = new Tuple<int, int>(snakeBody.Last().Item1 + 1, snakeBody.Last().Item2);
-                    tail = new Tuple<int, int>(snakeBody[0].Item1, snakeBody[0].Item2);
+                    head = (snakeBody.Last().y + 1, snakeBody.Last().x);
+                    tail = (snakeBody[0].y, snakeBody[0].x);
                     break;
                 case Direction.Left:
-                    head = new Tuple<int, int>(snakeBody.Last().Item1, snakeBody.Last().Item2 - 1);
-                    tail = new Tuple<int, int>(snakeBody[0].Item1, snakeBody[0].Item2);
+                    head = (snakeBody.Last().y, snakeBody.Last().x - 1);
+                    tail = (snakeBody[0].y, snakeBody[0].x);
                     break;
                 default:
                     break;
             }
-            Move();
+            MoveSnake();
             snakeFrequency.Start();
         }
 
