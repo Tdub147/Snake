@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" SizeToContent="WidthAndHeight" KeyDown="Window_KeyDown" Closing="Window_Closing">
     <Window.Resources>
-        
+        <Image x:Key="SnakeHead" x:Name="SnakeHead" Source="{StaticResource snakeHeadDrawingImage}" Grid.Column="0" Grid.Row="0"/>
     </Window.Resources>
     <Grid Margin="10">
         <StackPanel>
@@ -20,7 +20,6 @@
             </Grid>
             <Border BorderBrush="Black" BorderThickness="2">
                 <Grid x:Name="SnakeGrid" Height="300" Width="300" Background="LightGray">
-
                 </Grid>
             </Border>
         </StackPanel>

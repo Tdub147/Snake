@@ -57,13 +57,13 @@ namespace Snake
         public List<(int y, int x)> snakeBody = new List<(int y, int x)>();
         public (int y, int x) size = (y: 10, x: 10);
         public System.Timers.Timer snakeFrequency = new System.Timers.Timer(1000);
-        Image snakeHead = new Image { VerticalAlignment=VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
+        Image snakeHead =null;
 
         public MainWindow()
         {
             InitializeComponent();
             snakeFrequency.Elapsed += Timer_Elapsed;
-            snakeHead.Source = Application.Current.Resources["snakeHeadDrawingImage"] as DrawingImage;
+            snakeHead = (Resources["SnakeHead"] as Image);
             ResetGame();
         }
 
@@ -73,7 +73,7 @@ namespace Snake
             SnakeGrid.Children.Clear();
             SnakeGrid.ColumnDefinitions.Clear();
             SnakeGrid.RowDefinitions.Clear();
-            SnakeGrid.Children.Add(snakeHead);
+            
             for (int i = 0; i < size.x; i++)
             {
                 SnakeGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -105,6 +105,9 @@ namespace Snake
                 SetColor(0, 1, Brushes.Green);
                 snakeHead.SetValue(Grid.RowProperty, 0);
                 snakeHead.SetValue(Grid.ColumnProperty, 1);
+                snakeHead.ClearValue(RenderTransformProperty);
+                snakeHead.RenderTransform = ChangeHeadOrientation();
+                SnakeGrid.Children.Add(snakeHead);
             });
             Score = snakeBody.Count-1;
             direction = Direction.Right;
@@ -112,7 +115,26 @@ namespace Snake
             AddFood();
             snakeFrequency.Start();
         }
-        
+        private RotateTransform ChangeHeadOrientation()
+        {
+            RotateTransform rotateTransform = new RotateTransform(0);
+            switch (direction)
+            {
+                case Direction.Up:
+                    rotateTransform = new RotateTransform(0);
+                    break;
+                case Direction.Right:
+                    rotateTransform = new RotateTransform(90);
+                    break;
+                case Direction.Down:
+                    rotateTransform = new RotateTransform(180);
+                    break;
+                case Direction.Left:
+                    rotateTransform = new RotateTransform(270);
+                    break;
+            }
+            return rotateTransform;
+        }
         private (int row,int column) GetRandomBlock()
         {
             var rand = new Random();
@@ -169,6 +191,8 @@ namespace Snake
                 SetColor(head.y, head.x, Brushes.Green);
                 snakeHead.SetValue(Grid.RowProperty, head.y);
                 snakeHead.SetValue(Grid.ColumnProperty, head.x);
+                snakeHead.ClearValue(RenderTransformProperty);
+                snakeHead.RenderTransform = ChangeHeadOrientation();
             });
         }
 
