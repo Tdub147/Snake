@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" SizeToContent="WidthAndHeight" KeyDown="Window_KeyDown" Closing="Window_Closing">
     <Window.Resources>
-        <Image x:Key="SnakeHead" x:Name="SnakeHead" Source="{StaticResource snakeHeadDrawingImage}" Grid.Column="0" Grid.Row="0"/>
+        <Image x:Key="SnakeHead" x:Name="SnakeHead" Source="{StaticResource snakeHeadDrawingImage}" Grid.Column="1" Grid.Row="0" Margin="1"/>
     </Window.Resources>
     <Grid Margin="10">
         <StackPanel>
@@ -20,6 +20,35 @@
             </Grid>
             <Border BorderBrush="Black" BorderThickness="2">
                 <Grid x:Name="SnakeGrid" Height="300" Width="300" Background="LightGray">
+                    <!--<Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Image Source="{StaticResource snakeHeadDrawingImage}">
+                        <Image.RenderTransform>
+                            <RotateTransform Angle="90" CenterX="15" CenterY="15"/>
+                        </Image.RenderTransform>
+                    </Image>-->
                 </Grid>
             </Border>
         </StackPanel>

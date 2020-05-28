@@ -118,19 +118,22 @@ namespace Snake
         private RotateTransform ChangeHeadOrientation()
         {
             RotateTransform rotateTransform = new RotateTransform(0);
+            Grid grid = SnakeGrid.Children.OfType<Grid>().First();
+            double h = snakeHead.ActualHeight / 2;
+            double w = snakeHead.ActualWidth / 2;
             switch (direction)
             {
                 case Direction.Up:
-                    rotateTransform = new RotateTransform(0);
+                    rotateTransform = new RotateTransform(0, w, h);
                     break;
                 case Direction.Right:
-                    rotateTransform = new RotateTransform(90);
+                    rotateTransform = new RotateTransform(90, w, h);
                     break;
                 case Direction.Down:
-                    rotateTransform = new RotateTransform(180);
+                    rotateTransform = new RotateTransform(180, w, h);
                     break;
                 case Direction.Left:
-                    rotateTransform = new RotateTransform(270);
+                    rotateTransform = new RotateTransform(270, w, h);
                     break;
             }
             return rotateTransform;
